@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Face Attendance System</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:linear-gradient(120deg,#0f2027,#203a43,#2c5364);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    width:350px;
+    background:#111;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 0 20px #00f2fe;
+}
+
+h2{
+    text-align:center;
+    color:#00f2fe;
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.logo img{
+    width:80px;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    border:none;
+    border-radius:5px;
+    background:#222;
+    color:white;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    margin-top:20px;
+    background:#00f2fe;
+    border:none;
+    color:black;
+    font-weight:bold;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#ff00ff;
+    color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+</div>
+
+<h2>Face Attendance Login</h2>
+
+<form action="/login" method="post">
+
+<input type="text" name="username" placeholder="Enter Username" required>
+<input type="password" name="password" placeholder="Enter Password" required>
+
+<button type="submit">Login</button>
+
+</form>
+<a href="/register_page">
+<button>New Student? Register Here</button>
+</a>
+</div>
+
+</body>
+</html>

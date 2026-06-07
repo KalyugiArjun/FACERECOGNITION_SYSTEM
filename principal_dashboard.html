@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Principal Admin Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{margin:0;font-family:Segoe UI;background:#0f2027;display:flex;color:white;}
+
+.sidebar{
+width:220px;height:100vh;background:#111;padding:20px;
+}
+.sidebar h2{color:#00f2fe;}
+.sidebar a{display:block;margin:20px 0;color:white;text-decoration:none;}
+
+.main{flex:1;padding:20px;background:#203a43;}
+
+.cards{display:flex;gap:20px;flex-wrap:wrap;}
+.card{
+flex:1;
+background:#111;
+padding:20px;
+border-radius:10px;
+text-align:center;
+box-shadow:0 0 10px #00f2fe;
+cursor:pointer;
+}
+
+.section{
+margin-top:30px;
+background:#111;
+padding:20px;
+border-radius:10px;
+}
+
+input{
+padding:8px;
+margin:5px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+th,td{
+padding:10px;
+border:1px solid #444;
+text-align:center;
+}
+
+.add{background:green;color:white;}
+.del{background:red;color:white;}
+.up{background:orange;color:white;}
+
+button{
+padding:6px 12px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+<h2>Admin</h2>
+<a href="#stats">Dashboard</a>
+<a href="#add">Add Student</a>
+<a href="#manage">Manage Students</a>
+<a href="#chart">Analytics</a>
+<a href="/system_reset"
+   onclick="return confirm('⚠️ Are you sure? This will delete ALL DATA!')"
+   style="color:red;">
+   System Reset
+</a>
+<a href="/logout">Logout</a>
+
+</div>
+
+<div class="main">
+
+<!-- ================= STATS ================= -->
+<div id="stats" class="cards">
+<div class="card">Total: {{total_students}}</div>
+<div class="card" onclick="showPanel('presentPanel')">
+Present: {{present_students}}
+</div>
+
+<div class="card" onclick="showPanel('absentPanel')">
+Absent: {{absent_students}}
+</div>
+<div class="card">Attendance: {{percent}}%</div>
+</div>
+
+<!-- ================= ADD STUDENT ================= -->
+<div id="add" class="section">
+<h3>Add Student</h3>
+<form action="/add_student" method="POST">
+<input name="name" placeholder="Name" required>
+<input name="enrollment" placeholder="Enrollment" required>
+<input name="department" placeholder="Department" required>
+<input name="year" placeholder="Year" required>
+<input name="username" placeholder="Username" required>
+<input name="password" placeholder="Password" required>
+<button class="add">Add</button>
+</form>
+</div>
+
+<!-- ================= SEARCH ================= -->
+<div class="section">
+<input type="text" id="search" placeholder="Search Student...">
+</div>
+<div class="section" id="presentPanel" style="display:none;">
+<h3>Present Students</h3>
+<table>
+<tr><th>Name</th></tr>
+{% for s in plist %}
+<tr><td style="color:lime;">{{s}}</td></tr>
+{% endfor %}
+</table>
+</div>
+
+<div class="section" id="absentPanel" style="display:none;">
+<h3>Absent Students</h3>
+<table>
+<tr><th>Name</th></tr>
+{% for s in alist %}
+<tr><td style="color:red;">{{s}}</td></tr>
+{% endfor %}
+</table>
+</div>
+<!-- ================= STUDENT LIST ================= -->
+<div id="manage" class="section">
+<h3>Manage Students</h3>
+<table id="table">
+<tr>
+<th>Name</th>
+<th>Enroll</th>
+<th>Dept</th>
+<th>Year</th>
+<th>Action</th>
+</tr>
+
+{% for s in students %}
+<tr>
+<td>{{s[0]}}</td>
+<td>{{s[1]}}</td>
+<td>{{s[2]}}</td>
+<td>{{s[3]}}</td>
+<td>
+<a href="/delete_student/{{s[1]}}">
+<button class="del">Delete</button>
+</a>
+
+<a href="/edit_student/{{s[1]}}">
+<button class="up">Update</button>
+</a>
+
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+
+</div>
+
+<!-- ================= DATE FILTER ================= -->
+<div class="section">
+<h3>Date Wise Attendance</h3>
+<form action="/principal_date_filter" method="POST">
+<input type="date" name="date">
+<button>Filter</button>
+</form>
+</div>
+
+<!-- ================= CHART ================= -->
+<div id="chart" class="section">
+<canvas id="pieChart"></canvas>
+</div>
+
+</div>
+
+<script>
+
+// SEARCH
+document.getElementById("search").addEventListener("keyup",function(){
+let input=this.value.toLowerCase();
+document.querySelectorAll("#table tr").forEach(function(row){
+if(row.innerText.toLowerCase().includes(input))
+row.style.display="";
+else
+row.style.display="none";
+});
+});
+
+// CHART
+let present = Number("{{present_students}}");
+let absent = Number("{{absent_students}}");
+
+new Chart(document.getElementById('pieChart'), {
+type: 'pie',
+data: {
+labels: ['Present','Absent'],
+datasets: [{
+data: [present, absent],
+backgroundColor:['#00f2fe','#ff00ff']
+}]
+}
+});
+
+
+function showPanel(id){
+document.getElementById("presentPanel").style.display="none";
+document.getElementById("absentPanel").style.display="none";
+document.getElementById(id).style.display="block";
+}
+</script>
+
+</body>
+</html>

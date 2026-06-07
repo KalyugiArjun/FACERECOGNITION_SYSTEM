@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Registration</title>
+
+<style>
+body{
+background:linear-gradient(120deg,#00f2fe,#4facfe);
+font-family:Segoe UI;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.form-box{
+background:white;
+padding:30px;
+border-radius:10px;
+width:350px;
+box-shadow:0 0 15px #000;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin:10px 0;
+}
+
+button{
+padding:10px;
+background:#00f2fe;
+border:none;
+width:100%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="form-box">
+<h2>New Student Register</h2>
+
+<form action="/register" method="post">
+
+<h2>Student Registration</h2>
+
+<input type="text" name="name" placeholder="Full Name" required><br><br>
+
+<input type="text" name="enrollment" placeholder="Enrollment No" required><br><br>
+
+<input type="text" name="department" placeholder="Department (CSE)" required><br><br>
+
+<input type="text" name="year" placeholder="Year (2nd)" required><br><br>
+
+<input type="text" name="username" placeholder="Username" required><br><br>
+
+<input type="password" name="password" placeholder="Password" required><br><br>
+
+<button type="submit">Register</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

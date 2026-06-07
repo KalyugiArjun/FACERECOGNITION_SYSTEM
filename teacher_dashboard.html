@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Teacher Command Center</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI;
+background:#0f2027;
+display:flex;
+color:white;
+}
+
+.sidebar{
+width:220px;
+height:100vh;
+background:#111;
+padding:20px;
+}
+
+.sidebar h2{color:#00f2fe;}
+
+.sidebar a{
+display:block;
+margin:20px 0;
+color:white;
+text-decoration:none;
+}
+
+.main{
+flex:1;
+padding:20px;
+background:#203a43;
+}
+
+.cards{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.card{
+flex:1;
+padding:20px;
+background:#111;
+border-radius:10px;
+text-align:center;
+cursor:pointer;
+box-shadow:0 0 10px #00f2fe;
+transition:.3s;
+}
+
+.card:hover{
+transform:scale(1.05);
+background:#00f2fe;
+color:black;
+}
+
+.progress{
+height:20px;
+background:#444;
+border-radius:10px;
+margin-top:20px;
+}
+
+.progress-bar{
+height:20px;
+background:#00f2fe;
+border-radius:10px;
+width:0%;
+transition:1s;
+}
+
+.section{
+margin-top:30px;
+background:#111;
+padding:20px;
+border-radius:10px;
+}
+
+input{
+padding:10px;
+width:300px;
+margin-top:10px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th,td{
+padding:10px;
+border:1px solid #444;
+text-align:center;
+}
+
+button{
+padding:6px 12px;
+border:none;
+cursor:pointer;
+border-radius:5px;
+}
+
+.mark{background:green;color:white;}
+.del{background:red;color:white;}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+<h2>FAS</h2>
+<a href="/teacher">Dashboard</a>
+<a href="/start_attendance">Start Camera</a>
+<a href="/export_today">Export CSV</a>
+<a href="/logout">Logout</a>
+</div>
+
+<div class="main">
+
+<h2>Teacher Command Center</h2>
+
+<!-- STATS -->
+<div class="cards">
+<div class="card">Total: {{total}}</div>
+<div class="card" onclick="togglePanel('presentPanel')">Present: {{present}}</div>
+<div class="card" onclick="togglePanel('absentPanel')">Absent: {{absent}}</div>
+<div class="card">Attendance: {{percent}}%</div>
+</div>
+
+<div class="progress">
+<div class="progress-bar" id="bar"></div>
+</div>
+
+<!-- DATE FILTER -->
+<form action="/date_filter" method="post">
+<input type="date" name="date">
+<button type="submit">Filter Date</button>
+</form>
+
+<!-- SEARCH -->
+<input type="text" id="searchInput" placeholder="Search Student...">
+
+<!-- PRESENT -->
+<div class="section" id="presentPanel">
+<h3>Present Students</h3>
+<table id="presentTable">
+<tr>
+<th>Name</th>
+<th>Remove</th>
+</tr>
+
+{% for s in plist %}
+<tr>
+<td>{{s}}</td>
+<td>
+<a href="/delete/{{s}}">
+<button class="del">Remove</button>
+</a>
+</td>
+</tr>
+{% endfor %}
+
+</table>
+</div>
+
+<!-- ABSENT -->
+<div class="section" id="absentPanel" style="display:none;">
+<h3>Absent Students</h3>
+
+<table id="absentTable">
+<tr>
+<th>Name</th>
+<th>Mark</th>
+</tr>
+
+{% for s in alist %}
+<tr>
+<td>{{s}}</td>
+<td>
+<a href="/manual_mark/{{s}}">
+<button class="mark">Mark Present</button>
+</a>
+</td>
+</tr>
+{% endfor %}
+
+</table>
+</div>
+
+<!-- CHART -->
+<div class="section">
+<canvas id="chart"></canvas>
+</div>
+
+</div>
+
+<script>
+
+// progress bar
+document.getElementById("bar").style.width = "{{percent}}%";
+
+// panel toggle
+function togglePanel(id){
+
+document.getElementById("presentPanel").style.display="none";
+document.getElementById("absentPanel").style.display="none";
+
+document.getElementById(id).style.display="block";
+
+}
+
+// search
+document.getElementById("searchInput").addEventListener("keyup",function(){
+
+let value=this.value.toLowerCase();
+
+document.querySelectorAll("#presentTable tr,#absentTable tr").forEach(function(row,index){
+
+if(index===0) return; // skip header
+
+if(row.innerText.toLowerCase().includes(value))
+row.style.display="";
+else
+row.style.display="none";
+
+});
+
+});
+
+// chart data safe conversion
+let present = Number("{{present}}");
+let absent = Number("{{absent}}");
+
+new Chart(document.getElementById('chart'),{
+
+type:'bar',
+
+data:{
+labels:['Present','Absent'],
+datasets:[{
+label:'Attendance',
+data:[present,absent],
+backgroundColor:['#00f2fe','#ff00ff']
+}]
+}
+
+});
+
+</script>
+
+</body>
+</html>
